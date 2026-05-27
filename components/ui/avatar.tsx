@@ -5,7 +5,7 @@ export interface AvatarProps {
   name: string;
   src?: string;
   size?: "sm" | "md" | "lg" | "xl";
-  variant?: "blue" | "green" | "emerald";
+  variant?: "blue" | "green" | "emerald" | "softGreen";
   className?: string;
 }
 
@@ -30,9 +30,10 @@ export function Avatar({ name, src, size = "md", variant = "blue", className }: 
   };
 
   const variants = {
-    blue: "bg-blue-600 text-white dark:bg-blue-650",
+    blue: "bg-[#1a73e8] text-white",
     green: "bg-[#e6f4ea] text-[#137333] border border-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/40",
     emerald: "bg-[#137333] text-white dark:bg-emerald-700",
+    softGreen: "bg-[#B3D9CE] text-white",
   };
 
   return (

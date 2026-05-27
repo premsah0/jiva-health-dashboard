@@ -1,14 +1,10 @@
 "use client";
 
 import { Menu, Bell, Moon, Sun, Search, SidebarOpen } from "lucide-react";
-import { useState } from "react";
 import { useDashboardStore } from "@/store/useDashboardStore";
-import { Input } from "@/components/ui/input";
-import { ProfileDropdown } from "@/components/layout/profile-dropdown";
 
 export function Navbar() {
   const { toggleSidebar, theme, toggleTheme, searchQuery, setSearchQuery, isHydrated } = useDashboardStore();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-zinc-200 bg-white px-6 dark:border-zinc-800 dark:bg-zinc-950">
@@ -41,7 +37,7 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Right side: Actions & Circular Admin initials */}
+      {/* Right side: Actions & Static user badge */}
       <div className="flex items-center gap-3.5">
         {/* Dark mode moon/sun icon trigger */}
         <button
@@ -71,18 +67,15 @@ export function Navbar() {
           </span>
         </button>
 
-        {/* User initials circle (matches Figma rightmost avatar circle) with active Dropdown */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="h-8.5 w-8.5 rounded-full bg-[#137333] flex items-center justify-center text-white font-extrabold text-xs select-none shadow-xs cursor-pointer hover:opacity-90 active:scale-95 transition-all focus:outline-hidden"
-          >
-            AD
-          </button>
-          <ProfileDropdown isOpen={isDropdownOpen} onClose={() => setIsDropdownOpen(false)} />
+        {/* Static user initials badge (non-interactive) */}
+        <div
+          className="h-8.5 w-8.5 rounded-full bg-[#137333] flex items-center justify-center text-white font-extrabold text-xs select-none shadow-xs cursor-default"
+          aria-label="Logged in user"
+        >
+          AD
         </div>
       </div>
     </header>
   );
 }
+

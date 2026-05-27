@@ -1,14 +1,14 @@
 import { LucideIcon } from "lucide-react";
 
 /**
- * Represents a user in the system.
+ * Represents a user/patient in the system.
  */
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: "Admin" | "Editor" | "Viewer" | "User";
-  status: "Active" | "Inactive" | "Pending";
+  role: "Patient" | "Nurse" | "Doctor" | "Admin";
+  status: "Active" | "Inactive";
   avatarUrl?: string;
   createdAt: string;
   lastActive: string;
@@ -25,12 +25,12 @@ export interface SidebarItem {
 }
 
 /**
- * Represents core metrics displayed on the dashboard home.
+ * Represents core patient metrics displayed on the user management page.
  */
-export interface DashboardStats {
+export interface PatientStats {
   totalUsers: number;
-  activeUsers: number;
-  pendingUsers: number;
-  inactiveUsers: number;
-  growthRate: string; // e.g. "+12%"
+  primeUsers: number;
+  nonPrimeUsers: number;
+  totalFamilyMembers: number;
 }
+

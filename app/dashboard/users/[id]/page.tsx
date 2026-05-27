@@ -54,8 +54,8 @@ export default function UserDetailPage() {
     setUserStatus(user.status);
   }, [user]);
   
-  // Default active tab to "family" to match figma Family Members screenshot landing
-  const [activeTab, setActiveTab] = useState("family");
+  // Default active tab to "overview" so personal info shows first on load
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Mock addresses list state
   const [addresses, setAddresses] = useState<Address[]>([
@@ -212,12 +212,12 @@ export default function UserDetailPage() {
         </Link>
       </div>
 
-      {/* 2. User Profile Header (Matches figma header exactly) */}
-      <Card className="rounded-xl border border-zinc-200/60 shadow-none bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+      {/* 2. User Profile Header (flat layout matching Figma) */}
+      <div className="px-1">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             {/* Initials avatar in soft green circle */}
-            <Avatar name={user.name} size="lg" variant={user.isPrime ? "green" : "blue"} />
+            <Avatar name={user.name} size="lg" variant="softGreen" />
 
             <div className="space-y-1.5 leading-tight">
               <h2 className="text-[28px] font-semibold text-[#263238] dark:text-zinc-50 tracking-tight leading-tight">
@@ -288,7 +288,7 @@ export default function UserDetailPage() {
             />
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* 3. Reusable Statistics metric cards */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">

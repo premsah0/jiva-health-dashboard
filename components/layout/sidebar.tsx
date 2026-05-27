@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 // Sidebar navigation modules
 const navItems = [
-  { label: "Dashboard", href: "/dashboard/overview", icon: LayoutDashboard },
+  { label: "Dashboard", href: "/dashboard/users", icon: LayoutDashboard },
   { label: "Organization", href: "/dashboard/organization", icon: Building },
   { label: "User Management", href: "/dashboard/users", icon: Users },
   { label: "Services", href: "/dashboard/services", icon: Layers, hasDropdown: true },
@@ -92,7 +92,9 @@ export function Sidebar() {
         {/* Modules Scroll Area */}
         <nav className="flex-1 space-y-0.5 px-3 py-3 overflow-y-auto custom-scrollbar">
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href) || (item.label === "User Management" && pathname === "/dashboard/users");
+            const isActive = item.label === "User Management" && pathname.startsWith("/dashboard/users")
+              ? true
+              : item.label !== "Dashboard" && item.label !== "User Management" && pathname.startsWith(item.href);
 
             return (
               <Link
