@@ -10,6 +10,8 @@ export interface FigmaUser {
   lastActiveDate: string;
   appointmentsCount: number;
   isPrime: boolean;
+  gender?: "Male" | "Female" | "Other";
+  age?: number;
 }
 
 export interface FigmaStats {
@@ -35,6 +37,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2026-03-21",
     appointmentsCount: 8,
     isPrime: false,
+    gender: "Female",
+    age: 26,
   },
   {
     id: "2",
@@ -48,6 +52,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2025-12-30",
     appointmentsCount: 5,
     isPrime: false,
+    gender: "Female",
+    age: 16,
   },
   {
     id: "3",
@@ -61,6 +67,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2026-03-22",
     appointmentsCount: 30,
     isPrime: false,
+    gender: "Male",
+    age: 32,
   },
   {
     id: "4",
@@ -74,6 +82,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2026-05-26",
     appointmentsCount: 12,
     isPrime: true,
+    gender: "Male",
+    age: 48,
   },
   {
     id: "5",
@@ -87,6 +97,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2026-05-27",
     appointmentsCount: 15,
     isPrime: true,
+    gender: "Female",
+    age: 63,
   },
   {
     id: "6",
@@ -100,6 +112,8 @@ export const figmaUsers: FigmaUser[] = [
     lastActiveDate: "2026-05-27",
     appointmentsCount: 2,
     isPrime: true,
+    gender: "Male",
+    age: 72,
   }
 ];
 

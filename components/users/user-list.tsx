@@ -8,16 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserCard } from "@/components/users/user-card";
 import { AddUserModal } from "@/components/users/add-user-modal";
-import { SelectDropdown } from "@/components/ui/select-dropdown";
+import { FigmaFilterDropdown } from "@/components/ui/figma-filter-dropdown";
 import { useRouter } from "next/navigation";
 import { useDashboardStore } from "@/store/useDashboardStore";
 
 export function UserList() {
   const router = useRouter();
-  const { searchQuery, setSearchQuery } = useDashboardStore();
+  const {
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    genderAgeFilter,
+    setGenderAgeFilter,
+    resetFilters,
+  } = useDashboardStore();
+
   const [users, setUsers] = useState<FigmaUser[]>(figmaUsers);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
+
+  // Track active open dropdown: "genderAge" | "status" | null
+  const [openDropdown, setOpenDropdown] = useState<"genderAge" | "status" | null>(null);
 
   // Dialog Modals State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -61,7 +71,6 @@ export function UserList() {
     setShowAddModal(false);
   };
 
-  // Handles adding a user from Figma high-fidelity modal
   const handleAddUserFromModal = (userData: {
     name: string;
     email: string;
@@ -75,6 +84,20 @@ export function UserList() {
     state: string;
     country: string;
   }) => {
+    let age = 30; // default fallback
+    if (userData.dob) {
+      const birthDate = new Date(userData.dob);
+      if (!isNaN(birthDate.getTime())) {
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          calculatedAge--;
+        }
+        age = calculatedAge;
+      }
+    }
+
     const newUser: FigmaUser = {
       id: String(Date.now()),
       name: userData.name,
@@ -87,6 +110,8 @@ export function UserList() {
       lastActiveDate: new Date().toISOString().split("T")[0],
       appointmentsCount: 0,
       isPrime: false,
+      gender: userData.gender as "Male" | "Female" | "Other",
+      age: age,
     };
 
     setUsers([newUser, ...users]);
@@ -101,16 +126,16 @@ export function UserList() {
     const updated = users.map((u) =>
       u.id === editingUser.id
         ? {
-            ...u,
-            name,
-            email,
-            phone,
-            role,
-            status,
-            type,
-            appointmentsCount,
-            isPrime: type === "Prime User",
-          }
+          ...u,
+          name,
+          email,
+          phone,
+          role,
+          status,
+          type,
+          appointmentsCount,
+          isPrime: type === "Prime User",
+        }
         : u
     );
 
@@ -163,10 +188,28 @@ export function UserList() {
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || user.status.toLowerCase() === statusFilter.toLowerCase();
-    const matchesType = typeFilter === "all" || user.type.toLowerCase() === typeFilter.toLowerCase();
+    const matchesStatus =
+      statusFilter === "all" ||
+      user.status.toLowerCase() === statusFilter.toLowerCase();
 
-    return matchesSearch && matchesStatus && matchesType;
+    let matchesGenderAge = true;
+    if (genderAgeFilter !== "all") {
+      if (genderAgeFilter === "Male") {
+        matchesGenderAge = user.gender === "Male";
+      } else if (genderAgeFilter === "Female") {
+        matchesGenderAge = user.gender === "Female";
+      } else if (genderAgeFilter === "13–17 years") {
+        matchesGenderAge = !!user.age && user.age >= 13 && user.age <= 17;
+      } else if (genderAgeFilter === "18–35 years") {
+        matchesGenderAge = !!user.age && user.age >= 18 && user.age <= 35;
+      } else if (genderAgeFilter === "36–59 years") {
+        matchesGenderAge = !!user.age && user.age >= 36 && user.age <= 59;
+      } else if (genderAgeFilter === "60+ years") {
+        matchesGenderAge = !!user.age && user.age >= 60;
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesGenderAge;
   });
 
   return (
@@ -257,33 +300,38 @@ export function UserList() {
           />
         </div>
 
-        {/* Dropdown 1: Custom SelectDropdown Status filter with funnel icon */}
-        <SelectDropdown
-          leftIcon={<Filter className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />}
-          value={statusFilter}
-          onChange={setStatusFilter}
-          variant="neutral"
+        {/* Dropdown 1: Gender + Age Filter */}
+        <FigmaFilterDropdown
+          options={[
+            { value: "all", label: "All Status" },
+            { value: "Male", label: "Male" },
+            { value: "Female", label: "Female" },
+            { value: "13–17 years", label: "13–17 years" },
+            { value: "18–35 years", label: "18–35 years" },
+            { value: "36–59 years", label: "36–59 years" },
+            { value: "60+ years", label: "60+ years" },
+          ]}
+          value={genderAgeFilter}
+          onChange={setGenderAgeFilter}
+          placeholder="All Status"
+          isOpen={openDropdown === "genderAge"}
+          onToggle={() => setOpenDropdown(openDropdown === "genderAge" ? null : "genderAge")}
+          onClose={() => setOpenDropdown(null)}
+        />
+
+        {/* Dropdown 2: Status Filter */}
+        <FigmaFilterDropdown
           options={[
             { value: "all", label: "All Status" },
             { value: "active", label: "Active" },
             { value: "inactive", label: "Inactive" },
           ]}
-          className="w-full sm:w-40 shrink-0 text-xs font-semibold"
-        />
-
-        {/* Dropdown 2: Custom SelectDropdown Type filter with funnel icon */}
-        <SelectDropdown
-          leftIcon={<Filter className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />}
-          value={typeFilter}
-          onChange={setTypeFilter}
-          variant="neutral"
-          options={[
-            { value: "all", label: "All Types" },
-            { value: "normal user", label: "Normal User" },
-            { value: "support staff", label: "Support Staff" },
-            { value: "prime user", label: "Prime User" },
-          ]}
-          className="w-full sm:w-44 shrink-0 text-xs font-semibold"
+          value={statusFilter}
+          onChange={setStatusFilter}
+          placeholder="All Status"
+          isOpen={openDropdown === "status"}
+          onToggle={() => setOpenDropdown(openDropdown === "status" ? null : "status")}
+          onClose={() => setOpenDropdown(null)}
         />
       </div>
 
@@ -298,12 +346,8 @@ export function UserList() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setSearchQuery("");
-                  setStatusFilter("all");
-                  setTypeFilter("all");
-                }}
-                className="text-xs h-8"
+                onClick={resetFilters}
+                className="text-xs h-8 cursor-pointer"
               >
                 Reset Filter Queries
               </Button>

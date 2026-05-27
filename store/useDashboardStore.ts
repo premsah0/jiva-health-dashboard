@@ -21,6 +21,13 @@ interface DashboardState {
   setSearchQuery: (query: string) => void;
   addUser: (user: Omit<User, "id" | "createdAt" | "lastActive">) => void;
   deleteUser: (id: string) => void;
+
+  // Global filters
+  statusFilter: string;
+  setStatusFilter: (status: string) => void;
+  genderAgeFilter: string;
+  setGenderAgeFilter: (filter: string) => void;
+  resetFilters: () => void;
 }
 
 /**
@@ -67,6 +74,13 @@ export const useDashboardStore = create<DashboardState>((set) => ({
   users: mockUsers,
   searchQuery: "",
   setSearchQuery: (query) => set({ searchQuery: query }),
+
+  // Filter initialization & mutations
+  statusFilter: "all",
+  setStatusFilter: (status) => set({ statusFilter: status }),
+  genderAgeFilter: "all",
+  setGenderAgeFilter: (filter) => set({ genderAgeFilter: filter }),
+  resetFilters: () => set({ searchQuery: "", statusFilter: "all", genderAgeFilter: "all" }),
 
   addUser: (newUserData) =>
     set((state) => {
